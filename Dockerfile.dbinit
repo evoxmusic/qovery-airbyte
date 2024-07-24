@@ -1,0 +1,38 @@
+# This file is used to create a Docker image that will be used to initialize the database for Airbyte
+FROM debian:12.6-slim
+LABEL authors="Romaric P"
+
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
+
+# Install the necessary packages
+RUN apt update && apt install -y \
+    postgresql-client \
+    && apt clean
+
+WORKDIR /app
+
+RUN cat <<EOF > init_db.sh
+#!/bin/bash
+
+# Wait for the database to be ready
+until pg_isready -h \$DATABASE_URL -p 5432
+
+do
+  echo "Waiting for the database to be ready..."
+  sleep 2
+done
+
+# Create the database for Airbyte
+psql -h \$DATABASE_URL -U postgres -c "
+CREATE DATABASE airbyte;
+grant all privileges on database temporal to airbyte;
+
+create database temporal_visibility;
+grant all privileges on database temporal_visibility to airbyte;
+"
+EOF
+
+RUN chmod +x init_db.sh
+
+CMD ["./init_db.sh"]
