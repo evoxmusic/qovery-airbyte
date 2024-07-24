@@ -16,12 +16,31 @@ global:
     password: qovery.env.DATABASE_PASSWORD
 
 externalDatabase:
+  # -- The database host
+  host: qovery.env.DATABASE_HOST
+  # -- The database port
+  port: qovery.env.DATABASE_PORT
+  # -- The database name
+  database: qovery.env.DATABASE_NAME
+  # -- The database user
+  user: qovery.env.DATABASE_USER
+  # -- The database password
+  password: qovery.env.DATABASE_PASSWORD
+  # -- JDBC URL
   jdbcURL: qovery.env.DATABASE_URL
 
+temporal:
+  resources:
+    requests:
+      memory: 1024Mi
+      cpu: 1000m
+    limits:
+      memory: 1536Mi
+      cpu: 1500m
+
 # To uncomment if you are using a database with TLS (like AWS RDS)
-#temporal:
 #  extraEnv:
 #    - name: SQL_TLS
-#      value: "false"
+#      value: "true"
 #    - name: SQL_TLS_ENABLED
-#      value: "false"
+#      value: "true"

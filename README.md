@@ -16,3 +16,13 @@ Before you start, you need to have the following:
 ## Install
 
 TODO
+
+## Basic Authentication
+
+As mentioned by Airbyte:
+
+> Airbyte Kubernetes Community Edition does not support basic auth by default. To enable basic auth, consider adding a reverse proxy in front of Airbyte.
+
+But luckily, Qovery supports basic authentication out of the box. You can enable basic authentication for your Airbyte instance by following the steps below:
+
+TODO
