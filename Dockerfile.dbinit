@@ -4,6 +4,8 @@ LABEL authors="Romaric P"
 
 ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL
+ARG DATABASE_USER
+ENV DATABASE_USER=$DATABASE_USER
 
 # Install the necessary packages
 RUN apt update && apt install -y \
@@ -17,10 +19,10 @@ RUN cat <<EOF > init_db.sh
 
 set -e
 
-echo "CREATE DATABASE airbyte;" >> init.sql
-echo "grant all privileges on database airbyte to airbyte;" >> init.sql
+echo "CREATE DATABASE airbyte;CREATE DATABASE airbyte;" >> init.sql
+echo "GRANT ALL PRIVILEGES ON DATABASE airbyte to $DATABASE_URL;" >> init.sql
 echo "CREATE DATABASE temporal_visibility;" >> init.sql
-echo "grant all privileges on database temporal_visibility to airbyte;" >> init.sql
+echo "GRANT ALL PRIVILEGES ON DATABASE temporal_visibility to $DATABASE_URL;" >> init.sql
 
 # Create the database for Airbyte
 psql -f init.sql \$DATABASE_URL

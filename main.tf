@@ -21,19 +21,40 @@ resource "qovery_environment" "airbyte_environment" {
   mode       = "PRODUCTION"
 }
 
-resource "qovery_database" "airbyte_database" {
+resource "qovery_deployment_stage" "database" {
   environment_id = qovery_environment.airbyte_environment.id
-  name           = "Database"
-  type           = "POSTGRESQL"
-  version        = "16"
-  storage        = 20
-  mode           = "CONTAINER"
-  accessibility  = "PRIVATE"
+  name           = "Database Stage"
+}
+
+resource "qovery_deployment_stage" "init" {
+  environment_id = qovery_environment.airbyte_environment.id
+  name           = "Init Stage"
+
+  is_after = qovery_deployment_stage.database.id
+}
+
+resource "qovery_deployment_stage" "helm" {
+  environment_id = qovery_environment.airbyte_environment.id
+  name           = "Helm Stage"
+
+  is_after = qovery_deployment_stage.init.id
+}
+
+resource "qovery_database" "airbyte_database" {
+  environment_id      = qovery_environment.airbyte_environment.id
+  deployment_stage_id = qovery_deployment_stage.database.id
+  name                = "Database"
+  type                = "POSTGRESQL"
+  version             = "16"
+  storage             = 20
+  mode                = "CONTAINER"
+  accessibility       = "PRIVATE"
 }
 
 resource "qovery_job" "airbyte_database_init" {
-  environment_id = qovery_environment.airbyte_environment.id
-  name           = "DB Init Script"
+  environment_id      = qovery_environment.airbyte_environment.id
+  deployment_stage_id = qovery_deployment_stage.init.id
+  name                = "DB Init Script"
   healthchecks = {}
   source = {
     docker = {
@@ -48,10 +69,18 @@ resource "qovery_job" "airbyte_database_init" {
   schedule = {
     lifecycle_type = "GENERIC"
     on_start = {
-      arguments = ["init_db.sh"]
+      arguments = ["/app/init_db.sh"]
       entrypoint = ""
     }
+    on_stop   = null
+    on_delete = null
   }
+  environment_variables = [
+    {
+      key   = "DATABASE_USER"
+      value = "QOVERY_POSTGRESQL_Z${upper(element(split("-", qovery_database.airbyte_database.id), 0))}_LOGIN"
+    }
+  ]
   secret_aliases = [
     {
       key   = "DATABASE_URL"
@@ -70,8 +99,9 @@ resource "qovery_helm_repository" "airbyte_helm_repository" {
 }
 
 resource "qovery_helm" "airbyte_helm" {
-  environment_id = qovery_environment.airbyte_environment.id
-  name           = "Airbyte"
+  environment_id      = qovery_environment.airbyte_environment.id
+  deployment_stage_id = qovery_deployment_stage.helm.id
+  name                = "Airbyte"
   source = {
     helm_repository = {
 
