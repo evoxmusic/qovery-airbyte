@@ -4,6 +4,8 @@
 
 In this tutorial, you will learn how to deploy Airbyte on Kubernetes with Qovery in 5 minutes.
 
+> This tutorial is related to [this forum thread](https://discuss.qovery.com/t/help-setting-up-airbyte-and-using-kubernetes-secrets/2848)
+
 ## Prerequisites
 
 Before you start, you need to have the following:
@@ -13,3 +15,4 @@ Before you start, you need to have the following:
 
 ## Install
 
+TODO

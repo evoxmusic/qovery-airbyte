@@ -15,22 +15,18 @@ WORKDIR /app
 RUN cat <<EOF > init_db.sh
 #!/bin/bash
 
-# Wait for the database to be ready
-until pg_isready -h \$DATABASE_URL -p 5432
+set -e
 
-do
-  echo "Waiting for the database to be ready..."
-  sleep 2
-done
+echo "CREATE DATABASE airbyte;" >> init.sql
+echo "grant all privileges on database airbyte to airbyte;" >> init.sql
+echo "CREATE DATABASE temporal_visibility;" >> init.sql
+echo "grant all privileges on database temporal_visibility to airbyte;" >> init.sql
 
 # Create the database for Airbyte
-psql -h \$DATABASE_URL -U postgres -c "
-CREATE DATABASE airbyte;
-grant all privileges on database temporal to airbyte;
+psql -f init.sql \$DATABASE_URL
 
-create database temporal_visibility;
-grant all privileges on database temporal_visibility to airbyte;
-"
+echo "Database initialization complete."
+
 EOF
 
 RUN chmod +x init_db.sh

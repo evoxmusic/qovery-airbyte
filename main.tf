@@ -31,6 +31,35 @@ resource "qovery_database" "airbyte_database" {
   accessibility  = "PRIVATE"
 }
 
+resource "qovery_job" "airbyte_database_init" {
+  environment_id = qovery_environment.airbyte_environment.id
+  name           = "DB Init Script"
+  healthchecks = {}
+  source = {
+    docker = {
+      git_repository = {
+        url       = "https://github.com/evoxmusic/qovery-airbyte.git"
+        branch    = "main"
+        root_path = "/"
+      }
+      dockerfile_path = "Dockerfile.dbinit"
+    }
+  }
+  schedule = {
+    lifecycle_type = "GENERIC"
+    on_start = {
+      arguments = ["init_db.sh"]
+      entrypoint = ""
+    }
+  }
+  secret_aliases = [
+    {
+      key   = "DATABASE_URL"
+      value = "QOVERY_POSTGRESQL_Z${upper(element(split("-", qovery_database.airbyte_database.id), 0))}_DATABASE_URL_INTERNAL"
+    }
+  ]
+}
+
 resource "qovery_helm_repository" "airbyte_helm_repository" {
   organization_id       = var.qovery_organization_id
   name                  = "Airbyte"
@@ -63,8 +92,8 @@ resource "qovery_helm" "airbyte_helm" {
   }
   environment_variable_aliases = [
     {
-        key   = "DATABASE_HOST"
-        value = "QOVERY_POSTGRESQL_Z${upper(element(split("-", qovery_database.airbyte_database.id), 0))}_HOST_INTERNAL"
+      key   = "DATABASE_HOST"
+      value = "QOVERY_POSTGRESQL_Z${upper(element(split("-", qovery_database.airbyte_database.id), 0))}_HOST_INTERNAL"
     },
     {
       key   = "DATABASE_NAME"
