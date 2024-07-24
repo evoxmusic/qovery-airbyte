@@ -19,9 +19,10 @@ RUN cat <<EOF > init_db.sh
 
 set -e
 
-echo "CREATE DATABASE airbyte;CREATE DATABASE airbyte;" >> init.sql
+# Create the init.sql file
+echo "CREATE DATABASE airbyte IF NOT EXISTS;" > init.sql
 echo "GRANT ALL PRIVILEGES ON DATABASE airbyte to $DATABASE_URL;" >> init.sql
-echo "CREATE DATABASE temporal_visibility;" >> init.sql
+echo "CREATE DATABASE temporal_visibility IF NOT EXISTS;" >> init.sql
 echo "GRANT ALL PRIVILEGES ON DATABASE temporal_visibility to $DATABASE_URL;" >> init.sql
 
 # Create the database for Airbyte
