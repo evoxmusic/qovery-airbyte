@@ -1,0 +1,27 @@
+postgresql:
+  enabled: false
+
+global:
+  database:
+    type: "external"
+    # -- The database host
+    host: qovery.env.DATABASE_HOST
+    # -- The database port
+    port: qovery.env.DATABASE_PORT
+    # -- The database name
+    database: qovery.env.DATABASE_NAME
+    # -- The database user
+    user: qovery.env.DATABASE_USER
+    # -- The database password
+    password: qovery.env.DATABASE_PASSWORD
+
+externalDatabase:
+  jdbcURL: qovery.env.DATABASE_URL
+
+# To uncomment if you are using a database with TLS (like AWS RDS)
+#temporal:
+#  extraEnv:
+#    - name: SQL_TLS
+#      value: "false"
+#    - name: SQL_TLS_ENABLED
+#      value: "false"
