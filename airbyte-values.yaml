@@ -32,12 +32,11 @@ externalDatabase:
 temporal:
   resources:
     requests:
-      memory: 1024Mi
-      cpu: 1000m
+      memory: 512Mi
+      cpu: 500m
     limits:
-      memory: 1536Mi
-      cpu: 1500m
-
+      memory: 768Mi
+      cpu: 1000m
 # To uncomment if you are using a database with TLS (like AWS RDS)
 #  extraEnv:
 #    - name: SQL_TLS

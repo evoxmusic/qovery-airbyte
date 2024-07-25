@@ -33,9 +33,9 @@ resource "qovery_deployment_stage" "init" {
   is_after = qovery_deployment_stage.database.id
 }
 
-resource "qovery_deployment_stage" "helm" {
+resource "qovery_deployment_stage" "app" {
   environment_id = qovery_environment.airbyte_environment.id
-  name           = "Helm Stage"
+  name           = "Apps Stage"
 
   is_after = qovery_deployment_stage.init.id
 }
@@ -55,6 +55,8 @@ resource "qovery_job" "airbyte_database_init" {
   environment_id      = qovery_environment.airbyte_environment.id
   deployment_stage_id = qovery_deployment_stage.init.id
   name                = "DB Init Script"
+  cpu                 = 100
+  memory              = 64
   healthchecks = {}
   source = {
     docker = {
@@ -100,8 +102,8 @@ resource "qovery_helm_repository" "airbyte_helm_repository" {
 
 resource "qovery_helm" "airbyte_helm" {
   environment_id      = qovery_environment.airbyte_environment.id
-  deployment_stage_id = qovery_deployment_stage.helm.id
-  name                = "Airbyte"
+  deployment_stage_id = qovery_deployment_stage.app.id
+  name                = var.airbyte_service_name
   source = {
     helm_repository = {
 
@@ -153,6 +155,63 @@ resource "qovery_helm" "airbyte_helm" {
     {
       key   = "DATABASE_PASSWORD"
       value = "QOVERY_POSTGRESQL_Z${upper(element(split("-", qovery_database.airbyte_database.id), 0))}_PASSWORD"
+    }
+  ]
+}
+
+resource "qovery_application" "airbyte_webapp_proxy" {
+  environment_id      = qovery_environment.airbyte_environment.id
+  deployment_stage_id = qovery_deployment_stage.app.id
+  name                = "${var.airbyte_service_name} Webapp Proxy"
+
+  git_repository = {
+    url       = "https://github.com/evoxmusic/qovery-airbyte.git"
+    branch    = "main"
+    root_path = "/"
+  }
+  build_mode            = "DOCKER"
+  dockerfile_path       = "Dockerfile.webappproxy"
+  cpu                   = 250
+  memory                = 256
+  min_running_instances = 2
+  max_running_instances = 5
+  healthchecks = {
+    readiness_probe = {
+      type = {
+        http = {
+          scheme = "HTTP"
+          port = 80
+        }
+      }
+      initial_delay_seconds = 30
+      period_seconds        = 10
+      timeout_seconds       = 10
+      success_threshold     = 1
+      failure_threshold     = 3
+    }
+    liveness_probe = {
+      type = {
+        http = {
+          scheme = "HTTP"
+          port = 80
+        }
+      }
+      initial_delay_seconds = 30
+      period_seconds        = 10
+      timeout_seconds       = 10
+      success_threshold     = 1
+      failure_threshold     = 3
+    }
+  }
+  environment_variables = [
+    {
+      key   = "AIRBYTE_WEBAPP_INTERNAL_HOST",
+      // internal Kubernetes service - workaround until Qovery Helm returns the internal host dynamically
+      value = "helm-z${(lower(element(split("-", qovery_helm.airbyte_helm.id), 0)))}-${lower(qovery_helm.airbyte_helm.name)}-svc"
+    },
+    {
+      key   = "AIRBYTE_WEBAPP_INTERNAL_PORT",
+      value = "80"
     }
   ]
 }
