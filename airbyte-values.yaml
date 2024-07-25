@@ -27,7 +27,7 @@ externalDatabase:
   # -- The database password
   password: qovery.env.DATABASE_PASSWORD
   # -- JDBC URL
-  jdbcURL: qovery.env.DATABASE_URL
+  jdbcURL: qovery.env.DATABASE_JDBC_URL
 
 temporal:
   resources:

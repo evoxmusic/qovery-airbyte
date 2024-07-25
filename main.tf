@@ -138,6 +138,13 @@ resource "qovery_helm" "airbyte_helm" {
       value = "QOVERY_POSTGRESQL_Z${upper(element(split("-", qovery_database.airbyte_database.id), 0))}_PORT"
     }
   ]
+  environment_variables = [
+    {
+      key = "DATABASE_JDBC_URL"
+      // Interpolated by Qovery dynamically
+      value = "jdbc:postgresql://{{DATABASE_USER}}:{{DATABASE_PASSWORD}}@{{DATABASE_HOST}}:{{DATABASE_PORT}}/{{DATABASE_NAME}}"
+    }
+  ]
   secret_aliases = [
     {
       key   = "DATABASE_URL"
