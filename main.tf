@@ -175,12 +175,22 @@ resource "qovery_application" "airbyte_webapp_proxy" {
   memory                = 256
   min_running_instances = 2
   max_running_instances = 5
+  ports = [
+    {
+      internal_port       = 80
+      external_port       = 443
+      protocol            = "HTTP"
+      publicly_accessible = true
+      is_default          = true
+    }
+  ]
   healthchecks = {
     readiness_probe = {
       type = {
         http = {
           scheme = "HTTP"
-          port = 80
+          port   = 80
+          path   = "/"
         }
       }
       initial_delay_seconds = 30
@@ -193,7 +203,8 @@ resource "qovery_application" "airbyte_webapp_proxy" {
       type = {
         http = {
           scheme = "HTTP"
-          port = 80
+          port   = 80
+          path   = "/"
         }
       }
       initial_delay_seconds = 30
@@ -207,7 +218,7 @@ resource "qovery_application" "airbyte_webapp_proxy" {
     {
       key   = "AIRBYTE_WEBAPP_INTERNAL_HOST",
       // internal Kubernetes service - workaround until Qovery Helm returns the internal host dynamically
-      value = "helm-z${(lower(element(split("-", qovery_helm.airbyte_helm.id), 0)))}-${lower(qovery_helm.airbyte_helm.name)}-svc"
+      value = "helm-z${(lower(element(split("-", qovery_helm.airbyte_helm.id), 0)))}-airbyte-${lower(qovery_helm.airbyte_helm.name)}-webapp-svc"
     },
     {
       key   = "AIRBYTE_WEBAPP_INTERNAL_PORT",
