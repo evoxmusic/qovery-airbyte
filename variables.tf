@@ -4,8 +4,8 @@ variable "qovery_access_token" {
 }
 
 variable "qovery_organization_id" {
-    description = "Qovery Organization ID where you will deploy your Airbyte stack"
-    type        = string
+  description = "Qovery Organization ID where you will deploy your Airbyte stack"
+  type        = string
 }
 
 variable "qovery_project_id" {
@@ -19,13 +19,19 @@ variable "qovery_cluster_id" {
 }
 
 variable "airbyte_helm_version" {
-    description = "Airbyte Helm chart version"
-    type        = string
-    default     = "0.344.2"
+  description = "Airbyte Helm chart version"
+  type        = string
+  default     = "0.344.2"
 }
 
 variable "airbyte_service_name" {
-    description = "Airbyte service name"
-    type        = string
-    default     = "Airbyte"
+  description = "Airbyte service name"
+  type        = string
+  default     = "Airbyte"
+}
+
+variable "qovery_airbyte_web_app_proxy_basic_auth" {
+  description = "Basic Auth for Airbyte web app proxy"
+  type        = string
+  default     = ""
 }

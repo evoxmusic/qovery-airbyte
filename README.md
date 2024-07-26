@@ -6,7 +6,7 @@ In this tutorial, you will learn how to deploy Airbyte on Kubernetes with Qovery
 
 > This tutorial is related to [this forum thread](https://discuss.qovery.com/t/help-setting-up-airbyte-and-using-kubernetes-secrets/2848)
 
-## Why Qovery?
+## Why Qovery with Airbyte?
 
 TLDR;
 - Time to install EKS production ready cluster: 2 minutes setup
@@ -65,6 +65,17 @@ As mentioned by Airbyte:
 
 > Airbyte Kubernetes Community Edition does not support basic auth by default. To enable basic auth, consider adding a reverse proxy in front of Airbyte.
 
-But luckily, Qovery supports basic authentication out of the box. You can enable basic authentication for your Airbyte instance by following the steps below:
-
-TODO
+But luckily, [Qovery supports basic authentication](https://hub.qovery.com/docs/using-qovery/configuration/advanced-settings/#networkingressbasic_auth_env_var) out of the box. You can enable basic authentication for your `Airbyte Web App Proxy` instance by following the steps below:
+1. Generate password hash with `htpasswd`:
+```bash
+$ htpasswd -n <username>
+New password:
+Re-type new password:
+username:$apr1$jpwW4vG9$fwbzWBgRqARzNX93plDq20
+```
+2. Set `TF_VAR_qovery_airbyte_web_app_proxy_basic_auth` environment variable with the generated password hash:
+```bash
+export TF_VAR_qovery_airbyte_web_app_proxy_basic_auth="username:$apr1$jpwW4vG9$fwbzWBgRqARzNX93plDq20"
+```
+3. Run `terraform apply`
+4. Redeploy the `Airbyte Web App Proxy` in Qovery

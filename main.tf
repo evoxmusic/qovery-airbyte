@@ -214,15 +214,24 @@ resource "qovery_application" "airbyte_webapp_proxy" {
       failure_threshold     = 3
     }
   }
-  environment_variables = [
-    {
-      key   = "AIRBYTE_WEBAPP_INTERNAL_HOST",
-      // internal Kubernetes service - workaround until Qovery Helm returns the internal host dynamically
-      value = "helm-z${(lower(element(split("-", qovery_helm.airbyte_helm.id), 0)))}-airbyte-${lower(qovery_helm.airbyte_helm.name)}-webapp-svc"
-    },
-    {
-      key   = "AIRBYTE_WEBAPP_INTERNAL_PORT",
-      value = "80"
-    }
-  ]
+  environment_variables = flatten([
+    [
+      {
+        key   = "AIRBYTE_WEBAPP_INTERNAL_HOST",
+        value = "helm-z${lower(element(split("-", qovery_helm.airbyte_helm.id), 0))}-airbyte-${lower(qovery_helm.airbyte_helm.name)}-webapp-svc"
+      },
+      {
+        key   = "AIRBYTE_WEBAPP_INTERNAL_PORT",
+        value = "80"
+      }
+    ], var.qovery_airbyte_web_app_proxy_basic_auth != "" ? [
+      {
+        key   = "AIRBYTE_WEBAPP_BASIC_AUTH",
+        value = var.qovery_airbyte_web_app_proxy_basic_auth
+      }
+    ] : []
+  ])
+  advanced_settings_json = var.qovery_airbyte_web_app_proxy_basic_auth != "" ? jsonencode({
+    "network.ingress.basic_auth_env_var" : "AIRBYTE_WEBAPP_BASIC_AUTH"
+  }) : "{}"
 }
