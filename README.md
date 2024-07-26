@@ -12,6 +12,7 @@ TLDR;
 - Time to install EKS production ready cluster: 2 minutes setup
 - Time to install Airbyte: 3 minutes
 - No EKS / GKE / Kapsule knowledge and maintenance required (Qovery takes care of it)
+- Secure access via Basic Auth and Built-in authenticated port forwarding
 
 Watch the video below to see how easy it is to deploy Airbyte on Kubernetes with Qovery:
 
@@ -79,3 +80,13 @@ export TF_VAR_qovery_airbyte_web_app_proxy_basic_auth="username:$apr1$jpwW4vG9$f
 ```
 3. Run `terraform apply`
 4. Redeploy the `Airbyte Web App Proxy` in Qovery
+
+## Port Forwarding
+
+Qovery provides a built-in authenticated port forwarding feature that allows you to access your services securely. You can access your Airbyte instance by following the steps below:
+1. Install the Qovery CLI by following the instructions [here](https://hub.qovery.com/docs/using-qovery/cli/install/)
+2. Run the following command to forward the Airbyte service to your local machine:
+```bash
+qovery port-forward -p 8000:80
+```
+3. Access Airbyte by visiting `http://localhost:8000`
