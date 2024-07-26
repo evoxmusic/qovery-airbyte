@@ -6,6 +6,18 @@ In this tutorial, you will learn how to deploy Airbyte on Kubernetes with Qovery
 
 > This tutorial is related to [this forum thread](https://discuss.qovery.com/t/help-setting-up-airbyte-and-using-kubernetes-secrets/2848)
 
+## Why Qovery?
+
+TLDR;
+- Time to install EKS production ready cluster: 2 minutes setup
+- Time to install Airbyte: 3 minutes
+
+Watch the video below to see how easy it is to deploy Airbyte on Kubernetes with Qovery:
+
+[![video](assets/video.png)](https://www.loom.com/share/2052bc83b0cb456fab20a5b25a6389f2)
+
+Qovery is a developer-friendly platform that allows you to deploy your applications on any cloud provider in just a few clicks. It is a great platform for developers who want to focus on building their applications without worrying about the infrastructure.
+
 ## Prerequisites
 
 Before you start, you need to have the following:
