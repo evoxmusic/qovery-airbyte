@@ -83,6 +83,10 @@ export TF_VAR_qovery_airbyte_web_app_proxy_basic_auth="username:$apr1$jpwW4vG9$f
 
 ## Port Forwarding
 
+If you don't want to publicly expose your Airbyte instance, you can access it securely via port forwarding.
+
+> You can disable the public access to your Airbyte instance by setting the `publicly_accessible` value to `false` in the `main.tf` file for `airbyte_webapp_proxy`. 
+
 Qovery provides a built-in authenticated port forwarding feature that allows you to access your services securely. You can access your Airbyte instance by following the steps below:
 1. Install the Qovery CLI by following the instructions [here](https://hub.qovery.com/docs/using-qovery/cli/install/)
 2. Run the following command to forward the Airbyte service to your local machine:
