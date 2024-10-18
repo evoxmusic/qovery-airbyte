@@ -34,16 +34,19 @@ Before you start, you need to have the following:
     1. Adapt the [airbyte-values.yaml](airbyte-values.yaml) file to your needs (optional)
 2. Run `terraform init`
 3. Set the [following environment variables](variables.tf):
-    1. `TF_VAR_qovery_api_token` - Your Qovery API token
+    1. `TF_VAR_qovery_access_token` - Your Qovery API token
     2. `TF_VAR_qovery_organization_id` - Your Qovery organization ID where to deploy Airbyte
     3. `TF_VAR_qovery_project_id` - Your Qovery project ID where to deploy Airbyte
     4. `TF_VAR_qovery_cluster_id` - Your Qovery cluster ID where to deploy Airbyte
+    5. `TF_VAR_qovery_airbyte_web_app_proxy_basic_auth` - Basic authentication for Airbyte Web App Proxy (optional)
 
 ```bash
-export TF_VAR_qovery_api_token="your_qovery_api_token" \
+export TF_VAR_qovery_access_token="your_qovery_api_token" \
 TF_VAR_qovery_organization_id="your_qovery_organization_id" \
 TF_VAR_qovery_project_id="your_qovery_project_id" \
-TF_VAR_qovery_cluster_id="your_qovery_cluster_id"
+TF_VAR_qovery_cluster_id="your_qovery_cluster_id" 
+# Optional
+# export TF_VAR_qovery_airbyte_web_app_proxy_basic_auth="username:$apr1$jpwW4vG9$fwbzWBgRqARzNX93plDq20" 
 ```
 
 4. Run `terraform apply`
