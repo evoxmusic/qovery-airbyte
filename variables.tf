@@ -21,7 +21,7 @@ variable "qovery_cluster_id" {
 variable "airbyte_helm_version" {
   description = "Airbyte Helm chart version"
   type        = string
-  default     = "0.344.2"
+  default     = "1.1.0"
 }
 
 variable "airbyte_service_name" {

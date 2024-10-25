@@ -37,9 +37,10 @@ temporal:
     limits:
       memory: 768Mi
       cpu: 1000m
-# To uncomment if you are using a database with TLS (like AWS RDS)
-#  extraEnv:
-#    - name: SQL_TLS
-#      value: "true"
-#    - name: SQL_TLS_ENABLED
-#      value: "true"
+  # To uncomment if you are using a database with TLS (like AWS RDS)
+  # bug https://github.com/airbytehq/airbyte-platform/pull/361
+  extraEnv:
+    - name: POSTGRES_TLS_ENABLED
+      value: "false"
+    - name: SQL_TLS_ENABLED
+      value: "false"
