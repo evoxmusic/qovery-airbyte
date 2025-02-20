@@ -18,10 +18,15 @@ variable "qovery_cluster_id" {
   type        = string
 }
 
+variable "quovery_github_token_id" {
+  description = "GitHub token for Qovery"
+  type        = string
+}
+
 variable "airbyte_helm_version" {
   description = "Airbyte Helm chart version"
   type        = string
-  default     = "1.1.0"
+  default     = "1.4.0"
 }
 
 variable "airbyte_service_name" {
