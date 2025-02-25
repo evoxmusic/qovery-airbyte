@@ -4,6 +4,10 @@ postgresql:
 global:
   database:
     type: "external"
+    # -- Disakbe SSL if you are using a database with TLS (like AWS RDS)
+    # -- https://github.com/airbytehq/airbyte-platform/pull/361
+    #ssl:
+    #  enabled: false
     # -- The database host
     host: qovery.env.DATABASE_HOST
     # -- The database port
@@ -37,10 +41,19 @@ temporal:
     limits:
       memory: 768Mi
       cpu: 1000m
-  # To uncomment if you are using a database with TLS (like AWS RDS)
-  # bug https://github.com/airbytehq/airbyte-platform/pull/361
   extraEnv:
     - name: POSTGRES_TLS_ENABLED
       value: "false"
     - name: SQL_TLS_ENABLED
       value: "false"
+    # -- Repllace the values above with the following if you are using an extrernal database with TLS (like AWS RDS)
+    # -- https://github.com/airbytehq/airbyte-platform/pull/361
+    #- name: POSTGRES_TLS_ENABLED
+    #  value: "true"
+    #- name: POSTGRES_TLS_DISABLE_HOST_VERIFICATION
+    #  value: "true"
+    #- name: SQL_TLS_ENABLED
+    #  value: "true"
+    #- name: SQL_TLS_DISABLE_HOST_VERIFICATION
+    #  value: "true"
+  

@@ -85,6 +85,9 @@ fabric.properties
 *.tfstate
 *.tfstate.*
 
+#terraform lock file
+.terraform.lock.hcl
+
 # Crash log files
 crash.log
 crash.*.log
@@ -113,3 +116,5 @@ override.tf.json
 .terraformrc
 terraform.rc
 
+# Env settings
+.env

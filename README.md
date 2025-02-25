@@ -38,13 +38,15 @@ Before you start, you need to have the following:
     2. `TF_VAR_qovery_organization_id` - Your Qovery organization ID where to deploy Airbyte
     3. `TF_VAR_qovery_project_id` - Your Qovery project ID where to deploy Airbyte
     4. `TF_VAR_qovery_cluster_id` - Your Qovery cluster ID where to deploy Airbyte
-    5. `TF_VAR_qovery_airbyte_web_app_proxy_basic_auth` - Basic authentication for Airbyte Web App Proxy (optional)
+    5. `TF_VAR_quovery_github_token_id` - Your Qovery Github Token ID
+    6. `TF_VAR_qovery_airbyte_web_app_proxy_basic_auth` - Basic authentication for Airbyte Web App Proxy (optional)
 
 ```bash
 export TF_VAR_qovery_access_token="your_qovery_api_token" \
 TF_VAR_qovery_organization_id="your_qovery_organization_id" \
 TF_VAR_qovery_project_id="your_qovery_project_id" \
-TF_VAR_qovery_cluster_id="your_qovery_cluster_id" 
+TF_VAR_qovery_cluster_id="your_qovery_cluster_id"  \
+TF_VAR_quovery_github_token_id="your_qovery_github_token_id"
 # Optional
 # export TF_VAR_qovery_airbyte_web_app_proxy_basic_auth="username:$apr1$jpwW4vG9$fwbzWBgRqARzNX93plDq20" 
 ```

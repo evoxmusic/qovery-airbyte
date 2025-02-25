@@ -23,21 +23,21 @@ resource "qovery_environment" "airbyte_environment" {
 
 resource "qovery_deployment_stage" "database" {
   environment_id = qovery_environment.airbyte_environment.id
-  name           = "Database Stage"
-}
-
-resource "qovery_deployment_stage" "init" {
-  environment_id = qovery_environment.airbyte_environment.id
-  name           = "Init Stage"
-
-  is_after = qovery_deployment_stage.database.id
+  name           = "Database"
 }
 
 resource "qovery_deployment_stage" "app" {
   environment_id = qovery_environment.airbyte_environment.id
-  name           = "Apps Stage"
+  name           = "App"
 
-  is_after = qovery_deployment_stage.init.id
+  is_after = qovery_deployment_stage.database.id
+}
+
+resource "qovery_deployment_stage" "proxy" {
+  environment_id = qovery_environment.airbyte_environment.id
+  name           = "Proxy"
+
+  is_after = qovery_deployment_stage.app.id
 }
 
 resource "qovery_database" "airbyte_database" {
@@ -47,48 +47,10 @@ resource "qovery_database" "airbyte_database" {
   type                = "POSTGRESQL"
   version             = "16"
   storage             = 20
-  mode                = "CONTAINER"
+  mode                = "CONTAINER" # change to "MANAGED" if you want to use external RDS Database
   accessibility       = "PRIVATE"
-}
 
-resource "qovery_job" "airbyte_database_init" {
-  environment_id      = qovery_environment.airbyte_environment.id
-  deployment_stage_id = qovery_deployment_stage.init.id
-  name                = "DB Init Script"
-  cpu                 = 100
-  memory              = 64
-  healthchecks = {}
-  source = {
-    docker = {
-      git_repository = {
-        url       = "https://github.com/evoxmusic/qovery-airbyte.git"
-        branch    = "main"
-        root_path = "/"
-      }
-      dockerfile_path = "Dockerfile.dbinit"
-    }
-  }
-  schedule = {
-    lifecycle_type = "GENERIC"
-    on_start = {
-      arguments = ["/app/init_db.sh"]
-      entrypoint = ""
-    }
-    on_stop   = null
-    on_delete = null
-  }
-  environment_variables = [
-    {
-      key   = "DATABASE_USER"
-      value = "QOVERY_POSTGRESQL_Z${upper(element(split("-", qovery_database.airbyte_database.id), 0))}_LOGIN"
-    }
-  ]
-  secret_aliases = [
-    {
-      key   = "DATABASE_URL"
-      value = "QOVERY_POSTGRESQL_Z${upper(element(split("-", qovery_database.airbyte_database.id), 0))}_DATABASE_URL_INTERNAL"
-    }
-  ]
+  # instance_type = "db.t3.small" # specify instance type for "MANAGED" mode / RDS Database
 }
 
 resource "qovery_helm_repository" "airbyte_helm_repository" {
@@ -161,13 +123,14 @@ resource "qovery_helm" "airbyte_helm" {
 
 resource "qovery_application" "airbyte_webapp_proxy" {
   environment_id      = qovery_environment.airbyte_environment.id
-  deployment_stage_id = qovery_deployment_stage.app.id
+  deployment_stage_id = qovery_deployment_stage.proxy.id
   name                = "${var.airbyte_service_name} Webapp Proxy"
 
   git_repository = {
     url       = "https://github.com/evoxmusic/qovery-airbyte.git"
     branch    = "main"
     root_path = "/"
+    git_token_id = var.quovery_github_token_id
   }
   build_mode            = "DOCKER"
   dockerfile_path       = "Dockerfile.webappproxy"
