@@ -56,4 +56,9 @@ temporal:
     #  value: "true"
     #- name: SQL_TLS_DISABLE_HOST_VERIFICATION
     #  value: "true"
-  
+
+server:
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
