@@ -26,7 +26,7 @@ variable "quovery_github_token_id" {
 variable "airbyte_helm_version" {
   description = "Airbyte Helm chart version"
   type        = string
-  default     = "1.5.1"
+  default     = "1.7.1"
 }
 
 variable "airbyte_service_name" {

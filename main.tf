@@ -45,7 +45,7 @@ resource "qovery_database" "airbyte_database" {
   deployment_stage_id = qovery_deployment_stage.database.id
   name                = "Database"
   type                = "POSTGRESQL"
-  version             = "16"
+  version             = "17"
   storage             = 20
   mode                = "CONTAINER" # change to "MANAGED" if you want to use external RDS Database
   accessibility       = "PRIVATE"
