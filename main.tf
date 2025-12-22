@@ -66,6 +66,7 @@ resource "qovery_helm" "airbyte_helm" {
   environment_id      = qovery_environment.airbyte_environment.id
   deployment_stage_id = qovery_deployment_stage.app.id
   name                = var.airbyte_service_name
+  description         = "Airbyte Instance"
   source = {
     helm_repository = {
 
@@ -130,7 +131,7 @@ resource "qovery_application" "airbyte_webapp_proxy" {
     url       = "https://github.com/evoxmusic/qovery-airbyte.git"
     branch    = "main"
     root_path = "/"
-    git_token_id = var.quovery_github_token_id
+    git_token_id = var.qovery_github_token_id
   }
   build_mode            = "DOCKER"
   dockerfile_path       = "Dockerfile.webappproxy"

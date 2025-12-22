@@ -18,7 +18,7 @@ variable "qovery_cluster_id" {
   type        = string
 }
 
-variable "quovery_github_token_id" {
+variable "qovery_github_token_id" {
   description = "GitHub token for Qovery"
   type        = string
 }
